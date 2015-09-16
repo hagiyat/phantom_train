@@ -9,7 +9,6 @@ defmodule PhantomTrain do
     children = [
       # Start the endpoint when the application starts
       worker(PhantomTrain.Repo, []),
-      worker(Eredisex, []),
     ]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html

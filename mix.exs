@@ -16,7 +16,7 @@ defmodule PhantomTrain.Mixfile do
   def application do
     [
       mod: {PhantomTrain, []},
-      applications: [:logger, :ecto, :eredisex],
+      applications: [:logger, :ecto, :exredis],
     ]
   end
 
@@ -25,7 +25,7 @@ defmodule PhantomTrain.Mixfile do
     [
       {:ecto, "~> 1.0.2"},
       {:mariaex, "~> 0.4.2"},
-      {:eredisex, git: "https://github.com/hagiyat/eredisex.git"},
+      {:exredis, "~> 0.2.0"},
       {:exrm, "~> 0.18.1"}
     ]
   end

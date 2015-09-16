@@ -28,9 +28,7 @@ config :phantom_train, PhantomTrain.Repo,
   username: "foo",
   password: "password"
 
-config Eredisex, :redis_host,
+config Exredis, :redis_host,
   host: "127.0.0.1",
-  port: 6379,
-  database: 1,
-  password: ""
+  port: 6379
 
