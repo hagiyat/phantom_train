@@ -22,13 +22,19 @@ use Mix.Config
 # here (which is why it is important to import them last).
 #
 #     import_config "#{Mix.env}.exs"
-config :phantom_train, PhantomTrain.Repo,
-  adapter: Ecto.Adapters.MySQL,
-  database: "dummy",
-  username: "foo",
-  password: "password"
-
-config Exredis, :redis_host,
-  host: "127.0.0.1",
-  port: 6379
+#
+#
+#
+# Input stream configuration:
+#
+# config :phantom_train, :input_stream,
+#   command: "redis-cli monitor"
+#
+# Output storage configuration:
+#
+# config :phantom_train, PhantomTrain.Repo,
+#   adapter: Ecto.Adapters.MySQL,
+#   database: "dummy",
+#   username: "foo",
+#   password: "password"
 

@@ -15,18 +15,13 @@ defmodule PhantomTrain.Mixfile do
   # Type `mix help compile.app` for more information
   def application do
     [
-      mod: {PhantomTrain, []},
-      applications: [:logger, :ecto, :exredis],
+      applications: [:logger],
     ]
   end
 
   # Dependencies can be Hex packages:
   defp deps do
     [
-      {:ecto, "~> 1.0.2"},
-      {:mariaex, "~> 0.4.2"},
-      {:exredis, "~> 0.2.0"},
-      {:exrm, "~> 0.18.1"}
     ]
   end
 end

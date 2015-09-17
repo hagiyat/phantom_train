@@ -1,19 +1,33 @@
 defmodule PhantomTrain do
-  use Application
+  use GenServer
 
-  # See http://elixir-lang.org/docs/stable/elixir/Application.html
-  # for more information on OTP Applications
-  def start(_type, _args) do
-    import Supervisor.Spec, warn: false
+  def start_link do
+    GenServer.start_link(__MODULE__, :ok, [])
+  end
 
-    children = [
-      # Start the endpoint when the application starts
-      worker(PhantomTrain.Repo, []),
-    ]
+  def init(:ok) do
+    {:ok, manager} = GenEvent.start_link
+    GenEvent.add_mon_handler(manager, PhantomTrain.Forwarder, self)
+    event_stream = spawn_link fn ->
+      for v <- GenEvent.stream(manager), do: store(v)
+    end
 
-    # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html
-    # for other strategies and supported options
-    opts = [strategy: :one_for_one, name: PhantomTrain.Supervisor]
-    Supervisor.start_link(children, opts)
+    {:ok, subscriber} = PhantomTrain.Subscriber.start_link(manager)
+    subscriber |> PhantomTrain.Subscriber.subscribe
+
+    {:ok, %{event_manager: manager, subscriber: subscriber, event_stream: event_stream}}
+  end
+
+  def test(server) do
+    GenServer.cast(server, :test)
+  end
+
+  def handle_cast(:test, state) do
+    require IEx; IEx.pry
+    {:noreply, state}
+  end
+
+  defp store(message) do
+    IO.inspect("in storer:#{message}")
   end
 end
