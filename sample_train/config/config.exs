@@ -2,7 +2,8 @@
 # and its dependencies with the aid of the Mix.Config module.
 use Mix.Config
 
-config :phantom_train, :input_stream,
+config :phantom_train, :subscriber,
+  module: PhantomTrain.Subscriber.SystemCommand,
   command: "redis-cli monitor"
 
 config :sample_train, SampleTrain.Repo,

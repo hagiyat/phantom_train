@@ -24,13 +24,15 @@ use Mix.Config
 #     import_config "#{Mix.env}.exs"
 #
 #
+# Sample configurations for PhantomTrain.
 #
 # Input stream configuration:
 #
-# config :phantom_train, :input_stream,
+# config :phantom_train, :subscriber,
+#   module: PhantomTrain.Subscriber.SystemCommand,
 #   command: "redis-cli monitor"
 #
-# Output storage configuration:
+# Output datastore configuration:
 #
 # config :phantom_train, PhantomTrain.Repo,
 #   adapter: Ecto.Adapters.MySQL,

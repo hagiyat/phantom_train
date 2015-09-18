@@ -12,19 +12,18 @@ defmodule PhantomTrain do
       for v <- GenEvent.stream(manager), do: store(v)
     end
 
-    {:ok, subscriber} = PhantomTrain.Subscriber.start_link(manager)
-    subscriber |> PhantomTrain.Subscriber.subscribe
+    {:ok, subscriber} = start_subscriber(manager)
 
     {:ok, %{event_manager: manager, subscriber: subscriber, event_stream: event_stream}}
   end
 
-  def test(server) do
-    GenServer.cast(server, :test)
-  end
+  def start_subscriber(event_manager) do
+    [{:module, subscriber_module} | options] = Application.get_env(:phantom_train, :subscriber)
 
-  def handle_cast(:test, state) do
-    require IEx; IEx.pry
-    {:noreply, state}
+    {:ok, subscriber} = subscriber_module.start_link(event_manager)
+    subscriber |> subscriber_module.subscribe(options)
+
+    {:ok, subscriber}
   end
 
   defp store(message) do

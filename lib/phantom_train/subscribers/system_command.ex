@@ -1,12 +1,16 @@
-defmodule PhantomTrain.Subscriber do
+defmodule PhantomTrain.Subscriber.SystemCommand do
   use GenServer
 
   def start_link(event_manager) do
-    GenServer.start_link(
-      __MODULE__,
-      event_manager,
-      []
-    )
+    GenServer.start_link(__MODULE__, event_manager)
+  end
+
+  def subscribe(server, options) do
+    GenServer.cast(server, {:subscribe, options})
+  end
+
+  def stop(server) do
+    GenServer.call(server, :stop)
   end
 
   defp message_loop(event_manager) do
@@ -19,23 +23,15 @@ defmodule PhantomTrain.Subscriber do
     end
   end
 
-  def subscribe(server) do
-    GenServer.cast(server, {:subscribe, Application.get_env(:phantom_train, :input_stream)})
-  end
-
-  def stop(server) do
-    GenServer.call(server, :stop)
-  end
-
   ## Server Callbacks
   def init(event_manager) do
     {:ok, %{msg_process: nil, event_manager: event_manager}}
   end
 
-  def handle_cast({:subscribe, input_stream}, state) do
+  def handle_cast({:subscribe, options}, state) do
     pid = spawn_link(fn ->
       port = Port.open(
-        {:spawn, input_stream[:command]},
+        {:spawn, options[:command]},
         [:stderr_to_stdout, :in, :exit_status]
       )
       message_loop(state.event_manager)
