@@ -8,8 +8,10 @@ defmodule PhantomTrain do
   def init(:ok) do
     {:ok, manager} = GenEvent.start_link
     GenEvent.add_mon_handler(manager, PhantomTrain.Forwarder, self)
+
+    stores = Application.get_env(:phantom_train, :stores)
     event_stream = spawn_link fn ->
-      for v <- GenEvent.stream(manager), do: store(v)
+      for v <- GenEvent.stream(manager), do: store(v, stores)
     end
 
     {:ok, subscriber} = start_subscriber(manager)
@@ -26,7 +28,16 @@ defmodule PhantomTrain do
     {:ok, subscriber}
   end
 
-  defp store(message) do
-    IO.inspect("in storer:#{message}")
+  defp store(message, stores) do
+    stores |> Enum.filter_map(
+      fn([{:match, m}|_]) -> m |> Regex.match? message end,
+      fn(store) ->
+        Task.async(
+          store[:module],
+          store[:callback],
+          [Regex.named_captures(store[:match], message)]
+        )
+      end
+    )
   end
 end

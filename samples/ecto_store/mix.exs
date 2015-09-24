@@ -31,7 +31,7 @@ defmodule SampleTrain.Mixfile do
   # Type `mix help deps` for more examples and options
   defp deps do
     [
-      {:phantom_train, path: ".."},
+      {:phantom_train, path: "../.."},
       {:ecto, "~> 1.0.2"},
       {:mariaex, "~> 0.4.2"},
       {:exrm, "~> 0.18.1"}

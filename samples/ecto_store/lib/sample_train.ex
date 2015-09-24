@@ -9,6 +9,7 @@ defmodule SampleTrain.App do
     children = [
       # Start the endpoint when the application starts
       worker(PhantomTrain, []),
+      worker(SampleTrain.Repo, []),
     ]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html

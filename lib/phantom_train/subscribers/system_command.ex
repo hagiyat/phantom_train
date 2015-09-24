@@ -9,13 +9,9 @@ defmodule PhantomTrain.Subscriber.SystemCommand do
     GenServer.cast(server, {:subscribe, options})
   end
 
-  def stop(server) do
-    GenServer.call(server, :stop)
-  end
-
   defp message_loop(event_manager) do
     receive do
-      {port, {:data, message}} ->
+      {_port, {:data, message}} ->
         event_manager |> GenEvent.notify(message |> to_string)
         message_loop(event_manager)
       _ ->
@@ -30,7 +26,7 @@ defmodule PhantomTrain.Subscriber.SystemCommand do
 
   def handle_cast({:subscribe, options}, state) do
     pid = spawn_link(fn ->
-      port = Port.open(
+      Port.open(
         {:spawn, options[:command]},
         [:stderr_to_stdout, :in, :exit_status]
       )
@@ -39,10 +35,10 @@ defmodule PhantomTrain.Subscriber.SystemCommand do
     {:noreply, %{state | msg_process: pid}}
   end
 
-  def handle_call(:stop, _from, state) do
-    # TODO:
+  def terminate(_reason, state) do
+    # TODO
     {:os_pid, opid} = state.port |> Port.info(:os_pid)
     :os.cmd("kill -9 #{opid}" |> String.to_char_list)
-    {:stop, :normal, :ok, state}
+    :ok
   end
 end
