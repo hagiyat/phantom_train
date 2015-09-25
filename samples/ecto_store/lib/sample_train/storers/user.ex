@@ -15,6 +15,9 @@ defmodule SampleTrain.Store.User do
     model |> cast(params, @required_field, @optional_field)
   end
 
+  @doc"""
+  callback
+  """
   def append_id(%{"value" => value}) do
     IO.inspect value
   end
