@@ -2,7 +2,7 @@ PhantomTrain
 ============
 
 PhantomTrain receives some input that can be streamed, is a platform for any output.
-Detailed implementation method, please refer to the samples/ecto_store.
+Detailed implementation method, please refer to the [samples](https://github.com/hagiyat/phantom_train_samples).
 
 ## Usage
 
