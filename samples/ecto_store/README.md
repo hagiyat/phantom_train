@@ -1,4 +1,0 @@
-SampleTrain
-===========
-
-** TODO: Add description **
