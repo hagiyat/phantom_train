@@ -10,8 +10,10 @@ defmodule PhantomTrain do
     GenEvent.add_mon_handler(manager, PhantomTrain.Forwarder, self)
 
     stores = Application.get_env(:phantom_train, :stores)
+    {:ok, deliverer_module, deliverer} = start_deliverer(stores)
+
     event_stream = spawn_link fn ->
-      for v <- GenEvent.stream(manager), do: store(v, stores)
+      for v <- GenEvent.stream(manager), do: deliver(v, deliverer_module, deliverer)
     end
 
     {:ok, subscriber} = start_subscriber(manager)
@@ -28,16 +30,13 @@ defmodule PhantomTrain do
     {:ok, subscriber}
   end
 
-  defp store(message, stores) do
-    stores |> Enum.filter_map(
-      fn([{:match, m}|_]) -> m |> Regex.match? message end,
-      fn(store) ->
-        Task.async(
-          store[:module],
-          store[:callback],
-          [Regex.named_captures(store[:match], message)]
-        )
-      end
-    )
+  def start_deliverer(stores) do
+    [{:module, deliverer_module} | _options] = Application.get_env(:phantom_train, :deliverer)
+    {:ok, deliverer} = deliverer_module.start_link(stores)
+    {:ok, deliverer_module, deliverer}
+  end
+
+  defp deliver(message, deliverer_module, deliverer) do
+    deliverer_module.deliver(deliverer, message)
   end
 end
